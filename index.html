@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Chit-chat</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+	    .message{
+        background-color: rgb(213, 213, 211);
+        margin: auto;
+		margin-bottom: 5px;
+        border: solid 2px black;
+        border-radius: 10px;
+        width: fit-content;
+        height: auto;
+        max-width: 70%;
+        padding: 12px;
+        font-family: 'Mukta', sans-serif;
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 500;
+    }
+	.name{
+		background-color: rgb(255, 184, 108);
+        margin: auto;
+		margin-bottom: 5px;
+        border: solid 2px black;
+        border-radius: 0px;
+        width: fit-content;
+        height: auto;
+        max-width: 70%;
+        padding: 3px;
+        font-family: 'Mukta', sans-serif;
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 500;
+	}
+    .chit-chat-container{
+        border: solid black 2px;
+        background-color: #DAC0A3;
+        height:500px;
+        width: 500px;
+        overflow-y: scroll;
+        margin: auto;
+        padding-top: 15px ;
+        padding-bottom: 15px;
+
+    }
+</style>
+
+<body style="background-color: #F8F0E5;">
+	<h1 class="font-bold text-black-500
+			text-3xl text-center mt-5">
+		Chit-chat
+	</h1>
+	<form class="flex flex-col justify-center
+				items-center mt-5"
+		id="form">
+		<input class="border border-gray-400
+					rounded-md mt-5 p-1"
+			type="text"
+			placeholder="Name"
+			id="myname">
+		<input class="border border-gray-400
+					rounded-md mt-5 p-1"
+			type="text"
+			placeholder="Type your message"
+			id="message">
+		<button class="bg-blue-500 rounded-md p-2
+					text-white mt-5 my-2">
+			Send
+		</button>
+	</form>
+	<div class="chit-chat-container"id="messageArea">
+		
+	</div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	let socket = io();
+
+	let form = document.getElementById('form');
+	let myname = document.getElementById('myname');
+	let message = document.getElementById('message');
+	let messageArea = document.getElementById("messageArea");
+
+	
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+  
+        if (message.value) {
+            socket.emit('send name', myname.value);
+            socket.emit('send message', message.value);
+            message.value = "";
+        }
+    });
+
+	socket.on("send name", (username) => {
+        let name = document.createElement("div");
+        name.classList.add("name");
+        name.textContent = username + ": ";
+        messageArea.appendChild(name);
+    });
+  
+    socket.on("send message", (chat) => {
+        let chatContent = document.createElement("div");
+		chatContent.classList.add("message");
+        chatContent.textContent = chat;
+        messageArea.appendChild(chatContent);
+    });
+
+</script>
+
+</html>
